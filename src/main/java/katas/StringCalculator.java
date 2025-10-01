@@ -39,7 +39,8 @@ public class StringCalculator {
         } else {
             input = input.replace(REGEX, defaultDelimiter);
         }
-        return input.split(defaultDelimiter);
+        String escapedDelimiter = Pattern.quote(defaultDelimiter);    
+        return input.split(escapedDelimiter);
     }
 
     private String extractDelimiter(String input) {
@@ -96,4 +97,6 @@ public class StringCalculator {
             return 0;
         }
     }
+
+
 }

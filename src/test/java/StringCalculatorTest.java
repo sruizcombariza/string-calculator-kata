@@ -87,4 +87,14 @@ class StringCalculatorTest {
         assertThat(actual).isEqualTo(6);
     }
 
+    @Test
+    void givenStringWithLongDelimiterWhenAddThenReturnSum() {
+        // given
+        StringCalculator stringCalculator = this.stringCalculator;
+        // when
+        Integer actual = stringCalculator.add("//[***]\n1***2***3");
+        // then
+        assertThat(actual).isEqualTo(6);
+    }
+
 }
