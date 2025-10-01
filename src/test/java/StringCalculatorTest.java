@@ -17,75 +17,74 @@ class StringCalculatorTest {
 
     @Test
     void givenEmptyStringWhenAddThenReturnZero() {
-        //given
+        // given
         StringCalculator stringCalculator = this.stringCalculator;
-        //when
+        // when
         Integer actual = stringCalculator.add("");
-        //then
+        // then
         assertThat(actual).isZero();
     }
 
     @Test
     void givenStringWithNumberWhenAddThenReturnNumber() {
-        //given
+        // given
         StringCalculator stringCalculator = this.stringCalculator;
-        //when
+        // when
         Integer actual = stringCalculator.add("4");
-        //then
+        // then
         assertThat(actual).isEqualTo(4);
     }
+
     @Test
     void givenStringWithNewLinesWhenAddThenReturnAddedNumber() {
-        //given
+        // given
         StringCalculator stringCalculator = this.stringCalculator;
-        //when
+        // when
         Integer actual = stringCalculator.add("1\n2,3");
-        //then
+        // then
         assertThat(actual).isEqualTo(6);
     }
+
     @Test
     void givenStringWithDifferentDelimitersWhenAddThenReturnAddedNumber() {
-        //given
+        // given
         StringCalculator stringCalculator = this.stringCalculator;
-        //when
+        // when
         Integer actual = stringCalculator.add("//;\n1;2");
-        //then
+        // then
         assertThat(actual).isEqualTo(3);
     }
+
     @Test
     void givenStringWithNegativeNumbersWhenAddThenThrowException() {
         assertThatThrownBy(() -> {
-            //given
+            // given
             StringCalculator stringCalculator = this.stringCalculator;
-            //when
-            Integer actual = stringCalculator.add("-1,-2");
-            //then
+            // when
+            stringCalculator.add("-1,-2");
+            // then
         }).isInstanceOf(NegativeNumberException.class)
                 .hasMessageContaining("negatives not allowed: -1 -2");
     }
+
     @Test
     void givenStringWithNumbersBiggerThan1000WhenAddThenNoSum() {
-        //given
+        // given
         StringCalculator stringCalculator = this.stringCalculator;
-        //when
+        // when
         Integer actual = stringCalculator.add("//;\n2;1001");
-        //then
+        // then
         assertThat(actual).isEqualTo(2);
     }
+
     @Test
     void givenDelimiterWithBracketsWhenAddThenAddNumber() {
-        //given
+        // given
         StringCalculator stringCalculator = this.stringCalculator;
-        //when
+        // when
         Integer actual = stringCalculator.add("//[]\n12***3");
-        //then
+        // then
         assertThat(actual).isEqualTo(6);
     }
-
-
-
-
-
-
 
 }
