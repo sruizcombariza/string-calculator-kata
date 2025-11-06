@@ -77,12 +77,35 @@ class StringCalculatorTest {
         assertThat(actual).isEqualTo(2);
     }
 
+    // Step 2: unknown amount of numbers
     @Test
-    void givenDelimiterWithBracketsWhenAddThenAddNumber() {
+    void givenUnknownAmountOfNumbersWhenAddThenReturnSum() {
         // given
         StringCalculator stringCalculator = this.stringCalculator;
         // when
-        Integer actual = stringCalculator.add("//[]\n12***3");
+        Integer actual = stringCalculator.add("1,2,3");
+        // then
+        assertThat(actual).isEqualTo(6);
+    }
+
+    // Step 6 (default delimiter): numbers bigger than 1000 should be ignored
+    @Test
+    void givenDefaultDelimiterAndNumberBiggerThan1000WhenAddThenIgnored() {
+        // given
+        StringCalculator stringCalculator = this.stringCalculator;
+        // when
+        Integer actual = stringCalculator.add("2,1001");
+        // then
+        assertThat(actual).isEqualTo(2);
+    }
+
+    // Step 8: multiple single-char delimiters
+    @Test
+    void givenMultipleSingleCharDelimitersWhenAddThenReturnSum() {
+        // given
+        StringCalculator stringCalculator = this.stringCalculator;
+        // when
+        Integer actual = stringCalculator.add("//[*][%]\n1*2%3");
         // then
         assertThat(actual).isEqualTo(6);
     }
@@ -93,6 +116,17 @@ class StringCalculatorTest {
         StringCalculator stringCalculator = this.stringCalculator;
         // when
         Integer actual = stringCalculator.add("//[***]\n1***2***3");
+        // then
+        assertThat(actual).isEqualTo(6);
+    }
+
+    // Step 9: multiple multi-char delimiters
+    @Test
+    void givenMultipleMultiCharDelimitersWhenAddThenReturnSum() {
+        // given
+        StringCalculator stringCalculator = this.stringCalculator;
+        // when
+        Integer actual = stringCalculator.add("//[**][%%]\n1**2%%3");
         // then
         assertThat(actual).isEqualTo(6);
     }
