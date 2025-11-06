@@ -3,6 +3,7 @@ package katas;
 
 import exceptions.NegativeNumberException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -14,10 +15,10 @@ public class StringCalculator {
     public static final String REGEX = "\n";
     private static final Predicate<String> isSpecialDelimiter = delimiter -> delimiter.startsWith("//");
     private static final Predicate<Integer> majorToZero = num -> num >= 0;
-    private static final Predicate<Integer> minorTo1000 = num -> num < 1000;
+    private static final Predicate<Integer> minorOrEqualTo1000 = num -> num <= 1000;
     private static final Predicate<Integer> negativeNum = majorToZero.negate();
 
-    private String defaultDelimiter = ",";
+    private static final String COMMA = ",";
 
     public Integer add(String input) {
         if (input.isEmpty()) {
@@ -32,40 +33,53 @@ public class StringCalculator {
     }
 
     private String[] extractNumbersFromInput(String input) {
+        List<String> delimiters = new ArrayList<>();
+        // Always allow comma and newline as delimiters
+        delimiters.add(COMMA);
+        delimiters.add(REGEX);
+
+        String numbersSection = input;
+
         if (isSpecialDelimiter.test(input)) {
-            String[] arrayNumbers = input.split(REGEX);
-            defaultDelimiter = extractDelimiter(arrayNumbers[0]);
-            input = arrayNumbers[1];
-        } else {
-            input = input.replace(REGEX, defaultDelimiter);
+            String[] headerAndBody = input.split(REGEX, 2);
+            List<String> customDelimiters = extractDelimiters(headerAndBody[0]);
+            delimiters.addAll(customDelimiters);
+            numbersSection = headerAndBody.length > 1 ? headerAndBody[1] : "";
         }
-        String escapedDelimiter = Pattern.quote(defaultDelimiter);    
-        return input.split(escapedDelimiter);
+
+        String splitPattern = buildSplitPattern(delimiters);
+        return numbersSection.split(splitPattern);
     }
 
-    private String extractDelimiter(String input) {
-        Pattern pattern = Pattern.compile("^//(.*)");
-        Matcher matcher = pattern.matcher(input);
-        if (matcher.find()) {
-            String delimiter = matcher.group(1);
-            if (delimiter.startsWith("[")) {
-                pattern = Pattern.compile("\\[(.*?)\\]");
-                matcher = pattern.matcher(delimiter);
-                if (matcher.find()) {
-                    return matcher.group(1);
-                }
-            } else {
-                return delimiter;
+    private List<String> extractDelimiters(String headerLine) {
+        // headerLine is like "//;" or "//[***]" or "//[*][%]" or "//[**][%%]"
+        String spec = headerLine.substring(2); // remove leading "//"
+        List<String> result = new ArrayList<>();
+        if (spec.startsWith("[")) {
+            Matcher matcher = Pattern.compile("\\[(.*?)]").matcher(spec);
+            while (matcher.find()) {
+                result.add(matcher.group(1));
             }
+            if (result.isEmpty()) {
+                result.add(spec);
+            }
+        } else {
+            result.add(spec);
         }
-        return input;
+        return result;
+    }
+
+    private String buildSplitPattern(List<String> delimiters) {
+        return delimiters.stream()
+                .map(Pattern::quote)
+                .collect(Collectors.joining("|"));
     }
 
     private int sumNumbers(String[] numbersArray) {
         return Arrays.stream(numbersArray)
                 .map(this::convertToNumber)
                 .filter(majorToZero)
-                .filter(minorTo1000)
+                .filter(minorOrEqualTo1000)
                 .reduce(0, Integer::sum);
     }
 
